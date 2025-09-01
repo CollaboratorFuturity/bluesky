@@ -1,0 +1,51 @@
+{
+  "name": "LightRecipe",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the light recipe"
+    },
+    "description": {
+      "type": "string",
+      "description": "A brief description of what the recipe does"
+    },
+    "steps": {
+      "type": "array",
+      "description": "The sequence of steps in the recipe. Each step can have one or more actions to be performed simultaneously.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "actions": {
+            "type": "array",
+            "description": "Light actions to perform in this step.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "light_id": {
+                  "type": "string",
+                  "description": "The identifier of the light (e.g., '367nm')"
+                },
+                "duration": {
+                  "type": "number",
+                  "description": "How long the light should be on, in milliseconds."
+                }
+              },
+              "required": [
+                "light_id",
+                "duration"
+              ]
+            }
+          }
+        },
+        "required": [
+          "actions"
+        ]
+      }
+    }
+  },
+  "required": [
+    "name",
+    "steps"
+  ]
+}
