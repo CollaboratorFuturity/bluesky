@@ -40,7 +40,7 @@ const tileBaseStyle = {
 
 export default function ControlPage() {
   const [selectedLight, setSelectedLight] = useState(null);
-  const [duration, setDuration] = useState(null);
+  const [duration, setDuration] = useState('Choose Duration');
   const [commandLog, setCommandLog] = useState([]);
   const [isSending, setIsSending] = useState(false);
 
@@ -48,24 +48,24 @@ export default function ControlPage() {
     if (!selectedLight || !duration) return;
     const command = `led ${selectedLight.id} ON ${duration}ms`;
     setIsSending(true);
-    setCommandLog(prev => [...prev, `> ${command}`]);
+    setCommandLog(prev => [`> ${command}`, ...prev]);
     const result = await sendArduinoCommand(command);
     if (result?.success) {
-      setCommandLog(prev => [...prev, `< Arduino response: ${result.response}`]);
+      setCommandLog(prev => [`< Arduino response: ${result.response}`, ...prev]);
     } else if (result?.error) {
-      setCommandLog(prev => [...prev, `< Error: ${result.error}`]);
+      setCommandLog(prev => [`< Error: ${result.error}`, ...prev]);
     }
     setIsSending(false);
     setSelectedLight(null);
   };
 
   const handleStop = async () => {
-    setCommandLog(prev => [...prev, `> STOP`]);
+    setCommandLog(prev => [`> STOP`, ...prev]);
     const result = await sendArduinoCommand('STOP');
     if (result?.success) {
-      setCommandLog(prev => [...prev, `< Arduino response: ${result.response}`]);
+      setCommandLog(prev => [`< Arduino response: ${result.response}`, ...prev]);
     } else if (result?.error) {
-      setCommandLog(prev => [...prev, `< Error: ${result.error}`]);
+      setCommandLog(prev => [`< Error: ${result.error}`, ...prev]);
     }
     // keep current selection/duration intact so user can resend quickly if desired
   };
@@ -147,49 +147,98 @@ export default function ControlPage() {
 
           <div>
             <p className="text-base font-semibold text-gray-900 mb-4">2. Set ON Duration</p>
-            <Select
-              value={duration ? String(duration) : ''}
-              onValueChange={(val) => setDuration(parseInt(val))}
-              disabled={!selectedLight}
-            >
-              <SelectTrigger className="w-full bg-white border-2 border-gray-400 text-gray-900 data-[placeholder]:text-gray-900 text-base h-12 rounded-lg">
-                <SelectValue placeholder="Choose duration" />
-              </SelectTrigger>
-              <SelectContent className="bg-white border-2 border-gray-400 text-gray-900">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <Select
+                value={duration}
+                onValueChange={(val) => setDuration(val)}
+                disabled={!selectedLight}
+                style={{
+                  minWidth: 120,
+                  height: 28,
+                  fontSize: '0.9rem',
+                  lineHeight: 1.2,
+                  padding: '0 0.7rem',
+                  background: '#fff',
+                  border: '2px solid #bbb',
+                  borderRadius: 8,
+                  color: duration ? '#222' : '#888',
+                  appearance: 'none',
+                  outline: 'none',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                  cursor: selectedLight ? 'pointer' : 'not-allowed',
+                  transition: 'border 0.2s, box-shadow 0.2s',
+                  backgroundImage:
+                    'url("data:image/svg+xml,%3Csvg width=\'16\' height=\'16\' fill=\'%23666\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M4 6l4 4 4-4\' stroke=\'%23666\' stroke-width=\'2\' fill=\'none\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/%3E%3C/svg%3E")',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 0.7rem center',
+                  backgroundSize: '18px 18px',
+                }}
+              >
+                <SelectTrigger style={{ display: 'none' }} />
+                <SelectContent style={{ display: 'none' }} />
+                {/* Native option for placeholder, always present but hidden in dropdown */}
+                <option value="Choose Duration">
+                  Choose duration
+                </option>
                 {durationOptions.map(d => (
-                  <SelectItem key={d} value={d.toString()} className="focus:bg-gray-200">
+                  <SelectItem key={d} value={d.toString()} style={{ fontSize: '1.15rem' }}>
                     {d} ms
                   </SelectItem>
                 ))}
-              </SelectContent>
-            </Select>
+              </Select>
+              <Button
+                onClick={handleSend}
+                disabled={!selectedLight || duration === 'Choose Duration' || isSending}
+                style={{
+                  marginLeft: 0,
+                  minWidth: 140,
+                  height: 48,
+                  fontWeight: 700,
+                  fontSize: '1.1rem',
+                  borderRadius: 8,
+                  color: '#fff',
+                  backgroundColor:
+                    !selectedLight || !duration || isSending
+                      ? '#b0b0b0'
+                      : '#43b047',
+                  cursor:
+                    !selectedLight || !duration || isSending
+                      ? 'not-allowed'
+                      : 'pointer',
+                  transition: 'background 0.2s, color 0.2s, box-shadow 0.2s',
+                  boxShadow:
+                    !selectedLight || !duration || isSending
+                      ? 'none'
+                      : '0 1px 4px rgba(67,176,71,0.10)',
+                }}
+              >
+                {isSending ? 'Sending...' : 'Send Command'}
+              </Button>
+            </div>
           </div>
 
-          {/* Action buttons row: STOP (red) + Send (gray) */}
-          <div className="flex gap-3">
+          {/* Action buttons row: STOP (red) */}
+          <div style={{ marginTop: 24, display: 'flex', gap: 16 }}>
             <Button
               onClick={handleStop}
-              className="flex-1 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2"
               style={{
-                backgroundColor: '#d32f2f',      // red
-                height: '48px',                  // h-12
+                flex: 1,
+                backgroundColor: '#d32f2f',
+                height: 48,
+                color: '#fff',
+                fontWeight: 700,
+                fontSize: '1.1rem',
+                borderRadius: 8,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                transition: 'background 0.2s, color 0.2s, box-shadow 0.2s',
               }}
               title="Immediately stop all outputs"
             >
-              <Octagon className="w-5 h-5" />
+              <Octagon style={{ width: 20, height: 20 }} />
               STOP
-            </Button>
-
-            <Button
-              onClick={handleSend}
-              disabled={!selectedLight || !duration || isSending}
-              className="flex-1 text-white font-bold rounded-lg transition-colors"
-              style={{
-                backgroundColor: '#b0b0b0',      // flat gray like screenshot
-                height: '48px',                  // h-12
-              }}
-            >
-              {isSending ? 'Sending...' : 'Send Command'}
             </Button>
           </div>
         </CardContent>
@@ -205,7 +254,29 @@ export default function ControlPage() {
         <CardContent className="p-6">
           <div className="bg-gray-900 rounded-lg p-4 h-48 overflow-y-auto font-mono text-sm text-gray-200 border-2 border-gray-700">
             {commandLog.length === 0 && <p className="text-gray-500">Awaiting commands...</p>}
-            {commandLog.map((log, index) => <p key={index}>{log}</p>)}
+            {commandLog.map((log, index) => {
+              // Error message: all red
+              if (/error/i.test(log)) {
+                return (
+                  <p key={index} style={{ color: '#ff3b3b', fontWeight: 600 }}>
+                    {log}
+                  </p>
+                );
+              }
+              // LED command: bold, color code bold+underscored
+              const ledMatch = log.match(/(led\s+)(\w+)(\s+on\s+\d+ms)/i);
+              if (ledMatch) {
+                return (
+                  <p key={index} style={{ fontWeight: 700 }}>
+                    {ledMatch[1]}
+                    <span style={{ fontWeight: 700, textDecoration: 'underline' }}>{ledMatch[2]}</span>
+                    {ledMatch[3]}
+                  </p>
+                );
+              }
+              // Default: normal
+              return <p key={index}>{log}</p>;
+            })}
           </div>
         </CardContent>
       </Card>

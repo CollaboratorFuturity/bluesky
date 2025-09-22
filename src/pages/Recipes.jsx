@@ -209,7 +209,7 @@ export default function RecipesPage() {
     <div className="space-y-8">
       <Card className="bg-white border-2 border-gray-300 rounded-lg">
         <CardHeader>
-          <CardTitle className="flex items-center gap-3 text-xl font-bold text-gray-900">
+          <CardTitle className="flex items-center gap-3 font-bold text-gray-900" style={{ fontSize: '2rem' }}>
             <Play className="text-gray-500"/> Recipe Runner
           </CardTitle>
         </CardHeader>
@@ -244,7 +244,7 @@ export default function RecipesPage() {
       </Card>
 
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold flex items-center gap-3 text-gray-900">
+        <h1 className="font-bold flex items-center gap-3 text-gray-900" style={{ fontSize: '1.125rem' }}>
           <Bot className="text-gray-600"/> Light Recipes
         </h1>
         <Button
@@ -298,67 +298,89 @@ export default function RecipesPage() {
               initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
               className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col border-2 border-gray-300"
             >
-              <header className="p-4 border-b-2 border-gray-300 flex justify-between items-center">
-                <h2 className="text-lg font-bold text-gray-900">
-                  {currentRecipe?.id ? 'Edit Recipe' : 'Create New Recipe'}
-                </h2>
-                <Button variant="ghost" size="icon" onClick={() => setIsEditorOpen(false)}>
-                  <X className="text-gray-600"/>
-                </Button>
-              </header>
-
-              <main className="p-6 space-y-4 overflow-y-auto">
-                <Input
-                  placeholder="Recipe Name"
-                  value={currentRecipe?.name || ''}
-                  onChange={e => updateRecipeField('name', e.target.value)}
-                  className="bg-white border-2 border-gray-400 h-11 rounded-lg"
-                />
-                <Textarea
-                  placeholder="Description"
-                  value={currentRecipe?.description || ''}
-                  onChange={e => updateRecipeField('description', e.target.value)}
-                  className="bg-white border-2 border-gray-400 rounded-lg"
-                />
-
+              <Card className="flex flex-col w-full h-full">
+                <CardHeader>
+                  <div className="flex items-center">
+                    <h2 className="text-lg font-bold text-gray-900">
+                      {currentRecipe?.id ? 'Edit Recipe' : 'Create New Recipe'}
+                    </h2>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4 overflow-y-auto">
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1rem' }}>
+                  <Input
+                    placeholder="Recipe Name"
+                    value={currentRecipe?.name || ''}
+                    onChange={e => updateRecipeField('name', e.target.value)}
+                    className="bg-white border-2 border-gray-400 rounded-lg"
+                    style={{
+                      height: '3.5rem',
+                      fontSize: '1.5rem',
+                      padding: '0 1.5rem',
+                      width: '100%',
+                      maxWidth: '480px',
+                      fontWeight: 600
+                    }}
+                  />
+                  <Textarea
+                    placeholder="Description"
+                    value={currentRecipe?.description || ''}
+                    onChange={e => updateRecipeField('description', e.target.value)}
+                    className="bg-white border-2 border-gray-400 rounded-lg"
+                  />
+                </div>
                 <h3 className="font-bold pt-4 text-gray-900">Steps</h3>
-                <div className="space-y-4">
-                  {currentRecipe?.steps?.map((step, stepIndex) => (
-                    <div key={stepIndex}>
-                      <Card className="bg-gray-200 border-2 border-gray-400 p-4 space-y-3 rounded-lg">
-                        <p className="text-sm font-bold text-gray-700">Step {stepIndex + 1}</p>
+                  <div className="space-y-4">
+                    {currentRecipe?.steps?.map((step, stepIndex) => (
+                      <div key={stepIndex}>
+                        <Card className="bg-gray-200 border-2 border-gray-400 p-4 space-y-3 rounded-lg">
+                          <p className="text-sm font-bold text-gray-700">Step {stepIndex + 1}</p>
 
-                        {step.actions.map((action, actionIndex) => (
-                          <div key={actionIndex} className="flex items-center gap-2">
-                            <Select
-                              value={action.light_id}
-                              onValueChange={val => updateAction(stepIndex, actionIndex, 'light_id', val)}
-                            >
-                              <SelectTrigger className="bg-white border-2 border-gray-400 rounded-lg">
-                                <SelectValue placeholder="Light"/>
-                              </SelectTrigger>
-                              <SelectContent className="bg-white border-2 border-gray-300">
-                                {lights.map(l => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}
-                              </SelectContent>
-                            </Select>
+                          {step.actions.map((action, actionIndex) => (
+                            <div key={actionIndex} className="flex items-center gap-2">
+                              <Select
+                                value={action.light_id}
+                                onValueChange={val => updateAction(stepIndex, actionIndex, 'light_id', val)}
+                              >
+                                <SelectTrigger
+                                  className="bg-white border-2 border-gray-400 rounded-lg"
+                                  style={{
+                                    height: '2.5rem',
+                                    fontSize: '1.1rem',
+                                    minWidth: '120px'
+                                  }}
+                                >
+                                  <SelectValue placeholder="Light"/>
+                                </SelectTrigger>
+                                <SelectContent className="bg-white border-2 border-gray-300">
+                                  {lights.map(l => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}
+                                </SelectContent>
+                              </Select>
 
-                            <Select
-                              value={String(action.duration)}
-                              onValueChange={val => updateAction(stepIndex, actionIndex, 'duration', parseInt(val, 10))}
-                            >
-                              <SelectTrigger className="bg-white border-2 border-gray-400 rounded-lg">
-                                <SelectValue placeholder="Duration"/>
-                              </SelectTrigger>
-                              <SelectContent className="bg-white border-2 border-gray-300">
-                                {durationOptions.map(d => <SelectItem key={d} value={String(d)}>{d} ms</SelectItem>)}
-                              </SelectContent>
-                            </Select>
+                              <Select
+                                value={String(action.duration)}
+                                onValueChange={val => updateAction(stepIndex, actionIndex, 'duration', parseInt(val, 10))}
+                              >
+                                <SelectTrigger
+                                  className="bg-white border-2 border-gray-400 rounded-lg"
+                                  style={{
+                                    height: '2.5rem',
+                                    fontSize: '1.1rem',
+                                    minWidth: '120px'
+                                  }}
+                                >
+                                  <SelectValue placeholder="Duration"/>
+                                </SelectTrigger>
+                                <SelectContent className="bg-white border-2 border-gray-300">
+                                  {durationOptions.map(d => <SelectItem key={d} value={String(d)}>{d} ms</SelectItem>)}
+                                </SelectContent>
+                              </Select>
 
-                            <Button variant="ghost" size="icon" onClick={() => removeAction(stepIndex, actionIndex)}>
-                              <Trash2 className="text-gray-500 hover:text-red-600 w-4 h-4"/>
-                            </Button>
-                          </div>
-                        ))}
+                              <Button variant="ghost" size="icon" onClick={() => removeAction(stepIndex, actionIndex)}>
+                                <Trash2 className="text-gray-500 hover:text-red-600 w-4 h-4"/>
+                              </Button>
+                            </div>
+                          ))}
 
                         <Button
                           variant="outline" size="sm" onClick={() => addAction(stepIndex)}
@@ -380,7 +402,7 @@ export default function RecipesPage() {
                 >
                   <Plus className="w-4 h-4 mr-2"/>Add Sequential Step
                 </Button>
-              </main>
+                </CardContent>
 
               <footer className="p-4 border-t-2 border-gray-300 flex justify-end gap-3">
                 <Button variant="ghost" onClick={() => setIsEditorOpen(false)} className="text-gray-700 rounded-lg">
@@ -392,7 +414,8 @@ export default function RecipesPage() {
                 >
                   <Save className="w-4 h-4 mr-2"/>Save Recipe
                 </Button>
-              </footer>
+                </footer>
+              </Card>
             </motion.div>
           </motion.div>
         )}

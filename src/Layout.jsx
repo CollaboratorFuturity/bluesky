@@ -3,12 +3,13 @@
 import React from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { SlidersHorizontal, Bot, LineChart } from 'lucide-react';
+import { SlidersHorizontal, Bot, LineChart, Microchip } from 'lucide-react';
 
 const navItems = [
   { name: 'Control', href: createPageUrl('Control'), icon: SlidersHorizontal },
   { name: 'Recipes', href: createPageUrl('Recipes'), icon: Bot },
   { name: 'Chart',   href: createPageUrl('Chart'),   icon: LineChart },
+  { name: 'Hardware', href: '/hardware', icon: Microchip },
 ];
 
 export default function Layout() {
@@ -41,24 +42,55 @@ export default function Layout() {
                 </h1>
               </div>
 
-              <nav className="hidden md:flex md:space-x-2">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                      location.pathname === item.href
-                        ? 'bg-gray-200 text-gray-900'
-                        : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
-                    }`}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    {item.name}
-                  </Link>
-                ))}
-                <Link to="/hardware" className="rounded-lg px-4 py-2 text-sm font-medium hover:bg-gray-200">
-                  Hardware
-                </Link>
+              <nav
+                style={{
+                  display: 'flex',
+                  gap: 24,
+                  alignItems: 'center',
+                  height: 48,
+                  marginLeft: 16,
+                }}
+              >
+                {navItems.map((item) => {
+                  const isActive = location.pathname === item.href;
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        padding: '8px 20px',
+                        borderRadius: 8,
+                        border: '1px solid #e0e0e0',
+                        fontSize: 15,
+                        fontWeight: isActive ? 600 : 500,
+                        color: isActive ? '#222' : '#555',
+                        background: isActive ? '#eaeaea' : '#fff',
+                        cursor: 'pointer',
+                        textDecoration: 'none',
+                        transition: 'background 0.2s, color 0.2s, box-shadow 0.2s',
+                        boxShadow: isActive ? '0 1px 4px rgba(0,0,0,0.04)' : 'none',
+                      }}
+                      onMouseEnter={e => {
+                        if (!isActive) {
+                          e.currentTarget.style.background = '#f5f5f5';
+                          e.currentTarget.style.color = '#222';
+                        }
+                      }}
+                      onMouseLeave={e => {
+                        if (!isActive) {
+                          e.currentTarget.style.background = '#fff';
+                          e.currentTarget.style.color = '#555';
+                        }
+                      }}
+                    >
+                      {item.icon && <item.icon style={{ width: 18, height: 18, marginRight: 6, opacity: 0.8 }} />}
+                      {item.name}
+                    </Link>
+                  );
+                })}
               </nav>
 
               <div className="md:hidden">{/* Mobile menu placeholder */}</div>
@@ -73,27 +105,6 @@ export default function Layout() {
           </div>
         </main>
 
-        <footer className="md:hidden sticky bottom-0 bg-white border-t-2 border-gray-300">
-          <nav className="flex justify-around p-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`flex flex-col items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors w-full ${
-                  location.pathname === item.href
-                    ? 'bg-gray-200 text-gray-900'
-                    : 'text-gray-700'
-                }`}
-              >
-                <item.icon className="h-5 w-5" />
-                <span>{item.name}</span>
-              </Link>
-            ))}
-            <Link to="/hardware" className="rounded-lg px-3 py-2 text-sm font-medium">
-              Hardware
-            </Link>
-          </nav>
-        </footer>
       </div>
     </>
   );
