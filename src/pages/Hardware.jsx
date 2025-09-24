@@ -64,7 +64,7 @@ export default function Hardware() {
 
   return (
     <div style={{ display: 'grid', gap: 16 }}>
-      <Card>
+      <Card style={{ background: '#f3f4f6', color: '#222', fontWeight: 500 }}>
         <CardHeader>
           <CardTitle>USB Serial Connection</CardTitle>
         </CardHeader>
@@ -97,7 +97,7 @@ export default function Hardware() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card style={{ background: '#f3f4f6', color: '#222', fontWeight: 500 }}>
         <CardHeader>
           <CardTitle>Send Command</CardTitle>
         </CardHeader>
@@ -125,7 +125,7 @@ export default function Hardware() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card style={{ background: '#f3f4f6', color: '#222', fontWeight: 500 }}>
         <CardHeader>
           <CardTitle>Log</CardTitle>
         </CardHeader>

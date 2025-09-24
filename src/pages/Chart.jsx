@@ -22,7 +22,7 @@ export default function ChartPage() {
              <h1 className="text-2xl font-bold flex items-center gap-3 text-gray-900"><LineChart className="text-gray-600"/> Reference Charts</h1>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {charts.map((chart, index) => (
-                    <Card key={index} className="bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
+                    <Card key={index} className="border-2 border-gray-300 rounded-lg overflow-hidden" style={{ background: '#f3f4f6', color: '#222', fontWeight: 500, margin: '5px' }}>
                         <CardHeader>
                             <CardTitle className="text-gray-900 text-lg font-bold">{chart.title}</CardTitle>
                         </CardHeader>

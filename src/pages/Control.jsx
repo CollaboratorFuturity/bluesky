@@ -43,6 +43,7 @@ export default function ControlPage() {
   const [duration, setDuration] = useState('Choose Duration');
   const [commandLog, setCommandLog] = useState([]);
   const [isSending, setIsSending] = useState(false);
+  const [sendHover, setSendHover] = useState(false);
 
   const handleSend = async () => {
     if (!selectedLight || !duration) return;
@@ -56,7 +57,7 @@ export default function ControlPage() {
       setCommandLog(prev => [`< Error: ${result.error}`, ...prev]);
     }
     setIsSending(false);
-    setSelectedLight(null);
+    /* setSelectedLight(null); */
   };
 
   const handleStop = async () => {
@@ -87,7 +88,7 @@ export default function ControlPage() {
 
   return (
     <div className="space-y-8">
-      <Card className="bg-white border-2 border-gray-300 rounded-lg">
+      <Card className="border-2 border-gray-300 rounded-lg" style={{ background: '#f3f4f6', color: '#222', fontWeight: 500, margin: '5px' }}>
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-xl font-bold text-gray-900">
             <Cpu className="text-gray-500" />
@@ -117,8 +118,11 @@ export default function ControlPage() {
                     <button
                       key={light.id}
                       onClick={() => setSelectedLight(light)}
-                      style={washStyle}
-                      className={isSelected ? 'ring-4 ring-offset-2 ring-gray-900' : ''}
+                      style={{
+                        ...washStyle,
+                        ...(isSelected ? { border: '6px solid #22c55e' } : {})
+                      }}
+                      className={isSelected ? '' : ''}
                       onMouseDown={(e) => (e.currentTarget.style.transform = 'translateY(4px)')}
                       onMouseUp={(e) => (e.currentTarget.style.transform = '')}
                       onMouseLeave={(e) => (e.currentTarget.style.transform = '')}
@@ -132,8 +136,11 @@ export default function ControlPage() {
                   <button
                     key={light.id}
                     onClick={() => setSelectedLight(light)}
-                    style={tileGrad(light.id)}
-                    className={isSelected ? 'ring-4 ring-offset-2 ring-gray-900' : ''}
+                    style={{
+                      ...tileGrad(light.id),
+                      ...(isSelected ? { border: '6px solid #22c55e' } : {})
+                    }}
+                    className={isSelected ? '' : ''}
                     onMouseDown={(e) => (e.currentTarget.style.transform = 'translateY(4px)')}
                     onMouseUp={(e) => (e.currentTarget.style.transform = '')}
                     onMouseLeave={(e) => (e.currentTarget.style.transform = '')}
@@ -189,6 +196,8 @@ export default function ControlPage() {
               <Button
                 onClick={handleSend}
                 disabled={!selectedLight || duration === 'Choose Duration' || isSending}
+                onMouseEnter={() => setSendHover(true)}
+                onMouseLeave={() => setSendHover(false)}
                 style={{
                   marginLeft: 0,
                   minWidth: 140,
@@ -196,18 +205,19 @@ export default function ControlPage() {
                   fontWeight: 700,
                   fontSize: '1.1rem',
                   borderRadius: 8,
-                  color: '#fff',
-                  backgroundColor:
-                    !selectedLight || !duration || isSending
-                      ? '#b0b0b0'
-                      : '#43b047',
-                  cursor:
-                    !selectedLight || !duration || isSending
-                      ? 'not-allowed'
-                      : 'pointer',
+                  color: (!selectedLight || duration === 'Choose Duration' || isSending)
+                    ? '#888'
+                    : '#222',
+                  background: (!selectedLight || duration === 'Choose Duration' || isSending)
+                    ? '#e5e7eb'
+                    : (sendHover ? '#22c55e' : '#bbf7d0'),
+                  border: 'none',
+                  cursor: (!selectedLight || duration === 'Choose Duration' || isSending)
+                    ? 'not-allowed'
+                    : 'pointer',
                   transition: 'background 0.2s, color 0.2s, box-shadow 0.2s',
                   boxShadow:
-                    !selectedLight || !duration || isSending
+                    (!selectedLight || duration === 'Choose Duration' || isSending)
                       ? 'none'
                       : '0 1px 4px rgba(67,176,71,0.10)',
                 }}
@@ -244,7 +254,7 @@ export default function ControlPage() {
         </CardContent>
       </Card>
 
-      <Card className="bg-white border-2 border-gray-300 rounded-lg">
+      <Card className="border-2 border-gray-300 rounded-lg" style={{ background: '#f3f4f6', color: '#222', fontWeight: 500, margin: '5px' }}>
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-xl font-bold text-gray-900">
             <Terminal className="text-gray-500" />
@@ -254,7 +264,15 @@ export default function ControlPage() {
         <CardContent className="p-6">
           <div className="bg-gray-900 rounded-lg p-4 h-48 overflow-y-auto font-mono text-sm text-gray-200 border-2 border-gray-700">
             {commandLog.length === 0 && <p className="text-gray-500">Awaiting commands...</p>}
-            {commandLog.map((log, index) => {
+            {commandLog.slice(0, 10).map((log, index) => {
+              // STOP message: red and bold
+              if (log.trim() === '> STOP') {
+                return (
+                  <p key={index} style={{ color: '#ff3b3b', fontWeight: 700 }}>
+                    {log}
+                  </p>
+                );
+              }
               // Error message: all red
               if (/error/i.test(log)) {
                 return (

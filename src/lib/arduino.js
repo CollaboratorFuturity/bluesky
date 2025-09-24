@@ -7,6 +7,9 @@ let reader = null;
 let writer = null;
 let onDataCb = null;
 let readLoopAbort = null;
+export function isArduinoConnected() {
+  return !!writer;
+}
 
 export function onArduinoData(cb) {
   onDataCb = cb;

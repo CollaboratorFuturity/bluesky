@@ -62,7 +62,10 @@ export function Select({ value, defaultValue, onValueChange, children, ...rest }
     <Ctx.Provider value={{ items, value: current, setValue, placeholder, setPlaceholder }}>
       {/* Native select so it actually works; includes a placeholder option */}
       <select value={current} onChange={handleChange} {...rest}>
-        {/* Remove the default placeholder option */}
+        {/* Show placeholder as first option if set and value is empty */}
+        {placeholder && current === '' && (
+          <option value="" disabled hidden>{placeholder}</option>
+        )}
         {items.map(i => (
           <option key={i.value} value={i.value}>{i.label}</option>
         ))}

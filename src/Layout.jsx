@@ -24,7 +24,16 @@ export default function Layout() {
         }
       `}</style>
 
-      <div className="min-h-screen w-full bg-white text-gray-900">
+      <style>
+        {`
+          body { background: #595261ff !important; }
+          .icon-white-outside-card svg { color: #fff !important; font-weight: bold; }
+        `}
+      </style>
+      <div
+        className="min-h-screen w-full"
+        style={{ margin: '40px', background: '#595261ff', color: '#fff', fontWeight: 'bold' }}
+      >
         <header className="bg-white/90 backdrop-blur-sm border-b-2 border-gray-300 sticky top-0 z-40">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-20 items-center justify-between">
@@ -66,8 +75,8 @@ export default function Layout() {
                         border: '1px solid #e0e0e0',
                         fontSize: 15,
                         fontWeight: isActive ? 600 : 500,
-                        color: isActive ? '#222' : '#555',
-                        background: isActive ? '#eaeaea' : '#fff',
+                        color: isActive ? '#fff' : '#222',
+                        background: isActive ? '#22c55e' : '#fff',
                         cursor: 'pointer',
                         textDecoration: 'none',
                         transition: 'background 0.2s, color 0.2s, box-shadow 0.2s',
@@ -86,7 +95,7 @@ export default function Layout() {
                         }
                       }}
                     >
-                      {item.icon && <item.icon style={{ width: 18, height: 18, marginRight: 6, opacity: 0.8 }} />}
+                      {item.icon && <item.icon style={{ width: 18, height: 18, marginRight: 6, opacity: 0.8, color: isActive ? '#fff' : '#222' }} />}
                       {item.name}
                     </Link>
                   );
